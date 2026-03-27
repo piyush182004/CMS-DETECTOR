@@ -1,4 +1,4 @@
-# Super-Resolution at the CMS Detector — GSoC 2026
+# Super-Resolution at the CMS Detector — 
 
 **Applicant:** Piyush Mondal  
 **Organisation:** ML4Sci / CMS Experiment  
