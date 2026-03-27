@@ -1,0 +1,9 @@
+numpy
+pyarrow
+torch
+pyyaml
+scipy
+tensorboard
+pandas
+scikit-learn
+matplotlib

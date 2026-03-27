@@ -1,0 +1,62 @@
+# ===========================================================================
+# SRGAN Configuration - Calorimeter Jet Super-Resolution
+# Architecture: ESRGAN (RRDB) + Channel Attention + Physics Losses
+#
+# Changes based on mentor feedback (March 2026):
+#   1. Paired normalization (LR & HR share same scale) — fixes energy error
+#   2. Per-channel energy conservation loss — ECAL/HCAL/Tracks
+#   3. Stratified k-fold CV for limited data
+#   4. 50 epochs for convergence
+# ===========================================================================
+
+data:
+  train: "C:/GSOC-CMS-2K26/data/raw/QCDToGGQQ_IMGjet_RH1all_jet0_run0_n36272_LR.parquet"
+  val:   "C:/GSOC-CMS-2K26/data/raw/QCDToGGQQ_IMGjet_RH1all_jet0_run1_n47540_LR.parquet"
+  test:  "C:/GSOC-CMS-2K26/data/raw/QCDToGGQQ_IMGjet_RH1all_jet0_run2_n55494_LR.parquet"
+  train_samples: 5000 #to use all make sure put it (null) instead of 5000
+  val_samples:   500  # to use all make sure put it (null) instead of 500
+  test_samples:  500  # to use all make sure put it (null) instead of 500
+  normalise: true         # now uses paired normalization (both / max(HR))
+  num_workers: 0
+  cache_dir: "C:/GSOC-CMS-2K26/data/processed"
+  chunk_dir: "C:/GSOC-CMS-2K26/data/processed/chunks"
+
+model:
+  n_feat:    64           # feature channels
+  n_groups:  6            # number of RRDB blocks (ESRGAN uses 23, we use 6 for speed)
+  n_blocks:  3            # dense sub-blocks per RRDB (ESRGAN default)
+  growth:    32           # dense connection growth rate (ESRGAN default)
+  reduction: 16           # channel attention squeeze ratio
+  ema_decay: 0.999
+
+training:
+  epochs:        50       # 50 epochs — enough for convergence with paired norm
+  warmup_epochs:  5       # L1-only pre-training before GAN kicks in
+  hold_epochs:   10       # hold at peak LR after warmup
+  batch_size:    16
+  lr_g: 1.0e-4
+  lr_d: 1.0e-4
+  lr_min: 1.0e-6          # cosine floor
+  warmup_start: 0.1       # warmup starts at 10% of peak LR
+  n_critic: 1             # RaGAN doesn't need multi-step D
+  use_amp: true
+  seed: 42
+
+loss:
+  # L_G = L1 + λ_adv·L_adv + λ_energy·L_energy + λ_ch_energy·L_ch_energy + λ_cf·L_cf + λ_freq·L_freq
+  lambda_adv:       0.01  # RaGAN adversarial weight (ESRGAN-style)
+  lambda_energy:    1.0   # total energy conservation
+  lambda_ch_energy: 0.5   # per-channel energy conservation (ECAL/HCAL/Tracks)
+  lambda_cf:        0.5   # channel fraction balance
+  lambda_freq:      0.1   # spectral frequency loss (anti-smoothing)
+
+# Stratified k-fold cross validation (recommended with limited data)
+kfold:
+  enabled: true           # set to false for standard train/val split
+  n_folds: 5              # 5-fold stratified by total HR energy
+  energy_bins: 5          # number of energy quantile bins for stratification
+
+results:
+  checkpoints: "C:/GSOC-CMS-2K26/results/checkpoints"
+  plots:       "C:/GSOC-CMS-2K26/results/plots"
+  logs:        "C:/GSOC-CMS-2K26/results/logs"
