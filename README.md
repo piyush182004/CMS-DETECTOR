@@ -25,6 +25,8 @@ the plots results will be saved at
 "C:\GSOC-CMS-2K26\results\plots"
 which can be viewed
 
+One inference test with trained model on fold 1 epoch 50 has been tested and result image has been given test_output_epoch_050 (1).png with results .
+
 ---
 
 ## Table of Contents
