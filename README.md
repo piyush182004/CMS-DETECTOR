@@ -7,6 +7,8 @@
 
 ## Important Info
 
+Make sure to download the datasets from the [https://cernbox.cern.ch/s/EYgmOkI9BjwxNqy] and put the paths in the configs/srgan.yaml file
+
 For experimenting purpose I have used 5000 train,500 test,500 valid sets of data but to use all make sure to change in "C:\GSOC-CMS-2K26\configs\srgan.yaml" samples to null(also mentioned in comments of the code)
 
 To run the training process make sure to run in the terminal after every installations
