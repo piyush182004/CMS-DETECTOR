@@ -1,9 +1,10 @@
-numpy
-pyarrow
-torch
-pyyaml
-scipy
-tensorboard
-pandas
-scikit-learn
-matplotlib
+--extra-index-url https://download.pytorch.org/whl/cu121
+numpy==1.26.4
+pyarrow==19.0.1
+torch==2.5.1+cu121
+pyyaml==6.0.2
+scipy==1.11.1
+tensorboard==2.19.0
+pandas==2.2.3
+scikit-learn==1.7.0
+matplotlib==3.10.1
